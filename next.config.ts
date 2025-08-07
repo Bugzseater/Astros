@@ -1,23 +1,23 @@
+// next.config.js
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  eslint: {
+    // Enable ESLint during production builds
+    ignoreDuringBuilds: false,
+    // Specify directories to lint
+    dirs: ['app', 'pages', 'components', 'lib', 'src']
+  },
   images: {
-    // Option 1: Simple domains configuration (legacy)
-    domains: ['dl0.creation.com'],
-    
-    // Option 2: Recommended - remotePatterns (more secure and flexible)
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'dl0.creation.com',
-        port: '',
-        pathname: '/**', // Allows all paths under this domain
+        pathname: '/**',
       },
-      // You can add more domains as needed
       {
         protocol: 'https',
         hostname: 'hips.hearstapps.com',
-        port: '',
         pathname: '/**',
       },
     ],

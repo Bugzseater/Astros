@@ -1,0 +1,34 @@
+// .eslintrc.json
+{
+    "extends": ["next", "next/core-web-vitals", "eslint:recommended"],
+    "plugins": ["@typescript-eslint"],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "project": "./tsconfig.json",
+      "ecmaVersion": 2022,
+      "sourceType": "module"
+    },
+    "rules": {
+      // Next.js specific rules
+      "@next/next/no-html-link-for-pages": "error",
+      "@next/next/no-img-element": "warn",
+      
+      // React specific rules
+      "react/no-unescaped-entities": "off",
+      "react/jsx-key": "error",
+      
+      // TypeScript rules
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "warn",
+      
+      // General JavaScript rules
+      "no-console": "warn",
+      "eqeqeq": "error"
+    },
+    "settings": {
+      "next": {
+        "rootDir": "./"
+      }
+    },
+    "ignorePatterns": ["node_modules/", ".next/", "out/"]
+  }

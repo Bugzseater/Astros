@@ -4,9 +4,36 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/app/data/blogs'
 
-// Type-safe solution without 'any'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable react/no-array-index-key */
+
 type PageParams = {
   params: { id: string }
+}
+
+// Utility function to parse content blocks
+function parseContentBlocks(content: string) {
+  return content.split(/\n\s*\n/).map((block, idx) => {
+    const trimmed = block.trim()
+
+    if (trimmed.startsWith('### ')) {
+      return (
+        <h3 key={idx} className="text-xl font-semibold text-white mt-6 mb-2">
+          {trimmed.replace('### ', '')}
+        </h3>
+      )
+    }
+
+    if (trimmed.startsWith('## ')) {
+      return (
+        <h2 key={idx} className="text-2xl font-bold text-white mt-8 mb-2">
+          {trimmed.replace('## ', '')}
+        </h2>
+      )
+    }
+
+    return <p key={idx} className="mb-4">{trimmed}</p>
+  })
 }
 
 export default function Page({ params }: PageParams) {
@@ -16,12 +43,17 @@ export default function Page({ params }: PageParams) {
   const post = blogPosts.find((post) => post.id === postId)
   if (!post) notFound()
 
-  // Format date
-  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  // Format date with error handling
+  let formattedDate = 'Invalid date'
+  try {
+    formattedDate = new Date(post.date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  } catch (error) {
+    console.error('Error formatting date:', error)
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white px-4 md:px-6 py-12">
@@ -56,52 +88,54 @@ export default function Page({ params }: PageParams) {
             height={450}
             className="w-full max-w-2xl rounded-xl shadow-lg hover:scale-105 transition-transform duration-500"
             priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
           />
         </div>
 
         <article className="prose prose-invert max-w-none text-gray-300 text-lg leading-relaxed space-y-5">
-          {post.content.split(/\n\s*\n/).map((block, idx) => {
-            const trimmed = block.trim()
-
-            if (trimmed.startsWith('### ')) {
-              return (
-                <h3 key={idx} className="text-xl font-semibold text-white mt-6 mb-2">
-                  {trimmed.replace('### ', '')}
-                </h3>
-              )
-            }
-
-            if (trimmed.startsWith('## ')) {
-              return (
-                <h2 key={idx} className="text-2xl font-bold text-white mt-8 mb-2">
-                  {trimmed.replace('## ', '')}
-                </h2>
-              )
-            }
-
-            return <p key={idx} className="mb-4">{trimmed}</p>
-          })}
+          {parseContentBlocks(post.content)}
         </article>
       </div>
     </div>
   )
 }
 
-// Static generation
 export async function generateStaticParams() {
   return blogPosts.map((post) => ({
     id: post.id.toString(),
   }))
 }
 
-// Metadata generation
 export async function generateMetadata({ params }: PageParams) {
   const post = blogPosts.find((post) => post.id === Number(params.id))
+  
+  if (!post) {
+    return {
+      title: 'Blog Post Not Found',
+      description: 'The requested blog post could not be found',
+    }
+  }
+
   return {
-    title: post?.title || 'Blog Post',
-    description: post?.excerpt || '',
+    title: post.title,
+    description: post.excerpt,
     openGraph: {
-      images: post?.image ? [{ url: post.image }] : [],
+      title: post.title,
+      description: post.excerpt,
+      images: [
+        {
+          url: post.image,
+          width: 800,
+          height: 450,
+          alt: post.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: [post.image],
     },
   }
 }
