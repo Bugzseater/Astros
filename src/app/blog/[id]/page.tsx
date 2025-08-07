@@ -3,12 +3,17 @@ import { blogPosts } from '@/app/data/blogs'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
 
-interface BlogPageProps {
+export const dynamicParams = true // Set to false if you want to only allow pre-defined params
+
+interface PageProps {
   params: { id: string }
 }
 
-export default function BlogPage({ params }: BlogPageProps) {
-  const post = blogPosts.find((b) => b.id === Number(params.id))
+export default function Page({ params }: PageProps) {
+  const postId = Number(params.id)
+  if (isNaN(postId)) return notFound()
+
+  const post = blogPosts.find((b) => b.id === postId)
   if (!post) return notFound()
 
   return (
@@ -43,6 +48,7 @@ export default function BlogPage({ params }: BlogPageProps) {
             width={600}
             height={400}
             className="w-full max-w-md rounded-xl shadow-lg hover:scale-105 transition-transform duration-500"
+            priority
           />
         </div>
 
