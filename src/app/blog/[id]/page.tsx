@@ -4,29 +4,32 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/app/data/blogs'
 
+// Type-safe solution without 'any'
 type PageParams = {
   params: { id: string }
 }
 
-export default function Page({ params }: PageParams & { 
-  params: Promise<any> 
-}) {
+export default function Page({ params }: PageParams) {
   const postId = Number(params.id)
   if (isNaN(postId)) notFound()
 
   const post = blogPosts.find((post) => post.id === postId)
   if (!post) notFound()
-  
-  
+
+  // Format date
+  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white px-4 md:px-6 py-12">
       <div className="max-w-3xl mx-auto space-y-10 animate-fadeIn">
-        {/* Title with gradient */}
         <h1 className="text-4xl md:text-5xl font-extrabold leading-tight bg-gradient-to-r from-blue-300 via-purple-400 to-pink-300 text-transparent bg-clip-text">
           {post.title}
         </h1>
 
-        {/* Post metadata */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
           <div className="flex items-center gap-1">
             <User className="w-4 h-4" />
@@ -45,7 +48,6 @@ export default function Page({ params }: PageParams & {
           </span>
         </div>
 
-        {/* Featured image */}
         <div className="flex justify-center">
           <Image
             src={post.image}
@@ -57,7 +59,6 @@ export default function Page({ params }: PageParams & {
           />
         </div>
 
-        {/* Content with markdown parsing */}
         <article className="prose prose-invert max-w-none text-gray-300 text-lg leading-relaxed space-y-5">
           {post.content.split(/\n\s*\n/).map((block, idx) => {
             const trimmed = block.trim()
@@ -86,18 +87,21 @@ export default function Page({ params }: PageParams & {
   )
 }
 
-// Required for static generation
+// Static generation
 export async function generateStaticParams() {
   return blogPosts.map((post) => ({
     id: post.id.toString(),
   }))
 }
 
-// Optional: For better SEO
-export async function generateMetadata({ params }: { params: { id: string } }) {
+// Metadata generation
+export async function generateMetadata({ params }: PageParams) {
   const post = blogPosts.find((post) => post.id === Number(params.id))
   return {
     title: post?.title || 'Blog Post',
     description: post?.excerpt || '',
+    openGraph: {
+      images: post?.image ? [{ url: post.image }] : [],
+    },
   }
 }
