@@ -4,29 +4,18 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/app/data/blogs'
 
-// TypeScript interface
-interface BlogPostParams {
-  params: {
-    id: string
-  }
+type Props = {
+  params: { id: string }
+  searchParams?: { [key: string]: string | string[] | undefined }
 }
 
-export default function BlogPostPage({ params }: BlogPostParams) {
-  // Safely convert id to number
-  const postId = parseInt(params.id, 10)
-  
-  // Validate the ID
-  if (isNaN(postId)) {
-    notFound()
-  }
+export default function BlogPostPage({ params }: Props) {
+  const postId = Number(params.id)
+  if (isNaN(postId)) notFound()
 
-  // Find the blog post
   const post = blogPosts.find((post) => post.id === postId)
-  
-  // Return 404 if post not found
-  if (!post) {
-    notFound()
-  }
+  if (!post) notFound()
+
 
   // Format date
   const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
@@ -103,22 +92,18 @@ export default function BlogPostPage({ params }: BlogPostParams) {
   )
 }
 
-// Generate static paths for SSG
+// Required for static generation
 export async function generateStaticParams() {
   return blogPosts.map((post) => ({
     id: post.id.toString(),
   }))
 }
 
-// Generate metadata for SEO
-export async function generateMetadata({ params }: BlogPostParams) {
-  const post = blogPosts.find((post) => post.id === parseInt(params.id, 10))
-  
+// Optional: For better SEO
+export async function generateMetadata({ params }: Props) {
+  const post = blogPosts.find((post) => post.id === Number(params.id))
   return {
-    title: `${post?.title} | Space Blog`,
-    description: post?.excerpt,
-    openGraph: {
-      images: [post?.image || ''],
-    },
+    title: post?.title || 'Blog Post',
+    description: post?.excerpt || '',
   }
 }
