@@ -5,26 +5,18 @@ import { Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/app/data/blogs'
 
 type PageProps = {
-  params: Promise<{ id: string }> | { id: string }
-  searchParams?: { [key: string]: string | string[] | undefined }
+  params: { id: string }
+  searchParams?: Record<string, string | string[] | undefined>
 }
 
-export default async function Page({ params }: PageProps) {
-  const resolvedParams = await (params instanceof Promise ? params : Promise.resolve(params))
-  const postId = Number(resolvedParams.id)
-  
+export default function Page({ params }: PageProps) {
+  const postId = Number(params.id)
   if (isNaN(postId)) notFound()
 
   const post = blogPosts.find((post) => post.id === postId)
   if (!post) notFound()
-
-  // Format date
-  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-
+  
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white px-4 md:px-6 py-12">
       <div className="max-w-3xl mx-auto space-y-10 animate-fadeIn">
