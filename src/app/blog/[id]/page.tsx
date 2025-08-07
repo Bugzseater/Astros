@@ -2,10 +2,9 @@ import Image from 'next/image'
 import { blogPosts } from '@/app/data/blogs'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
-import type { ParsedUrlQuery } from 'querystring'
 
 interface BlogPageProps {
-  params: ParsedUrlQuery & { id: string }
+  params: { id: string }
 }
 
 export default function BlogPage({ params }: BlogPageProps) {
