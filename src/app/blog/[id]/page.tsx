@@ -4,18 +4,19 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/app/data/blogs'
 
-type Props = {
-  params: { id: string }
+type PageProps = {
+  params: Promise<{ id: string }> | { id: string }
   searchParams?: { [key: string]: string | string[] | undefined }
 }
 
-export default function BlogPostPage({ params }: Props) {
-  const postId = Number(params.id)
+export default async function Page({ params }: PageProps) {
+  const resolvedParams = await (params instanceof Promise ? params : Promise.resolve(params))
+  const postId = Number(resolvedParams.id)
+  
   if (isNaN(postId)) notFound()
 
   const post = blogPosts.find((post) => post.id === postId)
   if (!post) notFound()
-
 
   // Format date
   const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
@@ -100,7 +101,7 @@ export async function generateStaticParams() {
 }
 
 // Optional: For better SEO
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }: { params: { id: string } }) {
   const post = blogPosts.find((post) => post.id === Number(params.id))
   return {
     title: post?.title || 'Blog Post',
