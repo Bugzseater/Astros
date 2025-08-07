@@ -1,28 +1,49 @@
+// src/app/blog/[id]/page.tsx
 import Image from 'next/image'
-import { blogPosts } from '@/app/data/blogs'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
+import { blogPosts } from '@/app/data/blogs'
 
-export const dynamicParams = true // Set to false if you want to only allow pre-defined params
-
-interface PageProps {
-  params: { id: string }
+// TypeScript interface
+interface BlogPostParams {
+  params: {
+    id: string
+  }
 }
 
-export default function Page({ params }: PageProps) {
-  const postId = Number(params.id)
-  if (isNaN(postId)) return notFound()
+export default function BlogPostPage({ params }: BlogPostParams) {
+  // Safely convert id to number
+  const postId = parseInt(params.id, 10)
+  
+  // Validate the ID
+  if (isNaN(postId)) {
+    notFound()
+  }
 
-  const post = blogPosts.find((b) => b.id === postId)
-  if (!post) return notFound()
+  // Find the blog post
+  const post = blogPosts.find((post) => post.id === postId)
+  
+  // Return 404 if post not found
+  if (!post) {
+    notFound()
+  }
+
+  // Format date
+  const formattedDate = new Date(post.date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white px-4 md:px-6 py-12">
       <div className="max-w-3xl mx-auto space-y-10 animate-fadeIn">
+        {/* Title with gradient */}
         <h1 className="text-4xl md:text-5xl font-extrabold leading-tight bg-gradient-to-r from-blue-300 via-purple-400 to-pink-300 text-transparent bg-clip-text">
           {post.title}
         </h1>
 
+        {/* Post metadata */}
         <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
           <div className="flex items-center gap-1">
             <User className="w-4 h-4" />
@@ -30,7 +51,7 @@ export default function Page({ params }: PageProps) {
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="w-4 h-4" />
-            {new Date(post.date).toLocaleDateString()}
+            {formattedDate}
           </div>
           <div className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
@@ -41,28 +62,22 @@ export default function Page({ params }: PageProps) {
           </span>
         </div>
 
+        {/* Featured image */}
         <div className="flex justify-center">
           <Image
             src={post.image}
             alt={post.title}
-            width={600}
-            height={400}
-            className="w-full max-w-md rounded-xl shadow-lg hover:scale-105 transition-transform duration-500"
+            width={800}
+            height={450}
+            className="w-full max-w-2xl rounded-xl shadow-lg hover:scale-105 transition-transform duration-500"
             priority
           />
         </div>
 
-        <article className="text-gray-300 text-lg leading-relaxed space-y-5">
+        {/* Content with markdown parsing */}
+        <article className="prose prose-invert max-w-none text-gray-300 text-lg leading-relaxed space-y-5">
           {post.content.split(/\n\s*\n/).map((block, idx) => {
             const trimmed = block.trim()
-
-            if (trimmed.startsWith('## ')) {
-              return (
-                <h2 key={idx} className="text-2xl font-bold text-white mt-8 mb-2">
-                  {trimmed.replace('## ', '')}
-                </h2>
-              )
-            }
 
             if (trimmed.startsWith('### ')) {
               return (
@@ -72,10 +87,38 @@ export default function Page({ params }: PageProps) {
               )
             }
 
-            return <p key={idx}>{trimmed}</p>
+            if (trimmed.startsWith('## ')) {
+              return (
+                <h2 key={idx} className="text-2xl font-bold text-white mt-8 mb-2">
+                  {trimmed.replace('## ', '')}
+                </h2>
+              )
+            }
+
+            return <p key={idx} className="mb-4">{trimmed}</p>
           })}
         </article>
       </div>
     </div>
   )
+}
+
+// Generate static paths for SSG
+export async function generateStaticParams() {
+  return blogPosts.map((post) => ({
+    id: post.id.toString(),
+  }))
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: BlogPostParams) {
+  const post = blogPosts.find((post) => post.id === parseInt(params.id, 10))
+  
+  return {
+    title: `${post?.title} | Space Blog`,
+    description: post?.excerpt,
+    openGraph: {
+      images: [post?.image || ''],
+    },
+  }
 }
