@@ -25,7 +25,7 @@ export const blogPosts = [
   ### Conclusion
   
   The future is closer than we think. Within the next few decades, we may see permanent human settlements on the Moon or Mars, a thriving space tourism industry, and possibly the first contact with alien life.`,
-      image: 'https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?w=400&h=300&fit=crop',
+      image: 'https://hips.hearstapps.com/hmg-prod/images/digitally-created-3-dimensional-starry-sky-with-royalty-free-image-1744992067.pjpeg?crop=1xw:1xh;center,top&resize=1200:*',
       author: 'Dr. Sarah Chen',
       date: '2025-01-15',
       readTime: '5 min read',
@@ -56,7 +56,7 @@ export const blogPosts = [
   ### Conclusion
   
   JWST is more than a telescope; it's a time machine. By looking deep into space, it's helping us understand where we came from—and possibly where we're going.`,
-      image: 'https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=400&h=300&fit=crop',
+      image: 'https://hips.hearstapps.com/hmg-prod/images/digitally-created-3-dimensional-starry-sky-with-royalty-free-image-1744992067.pjpeg?crop=1xw:1xh;center,top&resize=1200:*',
       author: 'Prof. Michael Torres',
       date: '2025-01-12',
       readTime: '8 min read',
@@ -87,7 +87,7 @@ export const blogPosts = [
   ### Conclusion
   
   Colonizing Mars is no longer a sci-fi fantasy—it's a bold scientific goal. While the journey won't be easy, it promises to usher in a new era of space civilization and expand the frontiers of human existence.`,
-      image: 'https://images.unsplash.com/photo-1614314107768-6018061b5b72?w=400&h=300&fit=crop',
+      image: 'https://hips.hearstapps.com/hmg-prod/images/digitally-created-3-dimensional-starry-sky-with-royalty-free-image-1744992067.pjpeg?crop=1xw:1xh;center,top&resize=1200:*',
       author: 'Dr. Emily Rodriguez',
       date: '2025-01-10',
       readTime: '6 min read',
