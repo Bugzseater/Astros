@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ExternalLink, Calendar, User, ArrowRight, Clock } from 'lucide-react'
+import { Calendar, User, ArrowRight, Clock } from 'lucide-react'
 import { blogPosts } from '../data/blogs'
 
 const BlogListing = () => {
