@@ -1,6 +1,8 @@
 'use client'
+
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ExternalLink, Calendar, User, ArrowRight, Clock } from 'lucide-react'
 import { blogPosts } from '../data/blogs'
 
@@ -26,10 +28,10 @@ const BlogListing = () => {
               key={post.id}
               href={`/blog/${post.id}`}
               className={`group cursor-pointer transform transition-all duration-500 hover:scale-105 ${
-                post.featured ? 'md:col-span-2 lg:col-span-1' : ''
+                post.featured ? 'md:col-span-2 lg:col-span-2' : ''
               }`}
             >
-              <div className="relative backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl hover:bg-white/10 transition-all duration-500 h-full">
+              <div className="relative backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl hover:bg-white/10 transition-all duration-500 h-full flex flex-col">
                 {post.featured && (
                   <div className="absolute top-3 left-3 z-20">
                     <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-2 py-1 rounded-full text-xs font-bold">
@@ -37,11 +39,13 @@ const BlogListing = () => {
                     </div>
                   </div>
                 )}
-                <div className="relative h-48 overflow-hidden">
-                  <img
+                <div className="relative h-48 w-full overflow-hidden">
+                  <Image
                     src={post.image}
                     alt={post.title}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-110 rounded-t-2xl"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                   <div className="absolute bottom-3 left-3">
@@ -50,7 +54,7 @@ const BlogListing = () => {
                     </span>
                   </div>
                 </div>
-                <div className="p-5 flex flex-col h-full">
+                <div className="p-5 flex flex-col flex-grow">
                   <div className="flex items-center justify-between text-gray-400 text-xs mb-3">
                     <div className="flex items-center space-x-1">
                       <User className="w-3 h-3" />
