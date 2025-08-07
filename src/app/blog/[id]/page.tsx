@@ -4,12 +4,13 @@ import { notFound } from 'next/navigation'
 import { Calendar, Clock, User } from 'lucide-react'
 import { blogPosts } from '@/app/data/blogs'
 
-type PageProps = {
+type PageParams = {
   params: { id: string }
-  searchParams?: Record<string, string | string[] | undefined>
 }
 
-export default function Page({ params }: PageProps) {
+export default function Page({ params }: PageParams & { 
+  params: Promise<any> 
+}) {
   const postId = Number(params.id)
   if (isNaN(postId)) notFound()
 
